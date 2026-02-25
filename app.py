@@ -86,8 +86,11 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def rank_resumes_against_jd(jd_text, files):
 
-    jd_skills = extract_skills_sbert(jd_text)
     jd_text_lower = jd_text.lower()
+    jd_skills = extract_skills_sbert(jd_text)
+
+    if not jd_skills:
+        jd_skills = list(set(re.findall(r"[a-zA-Z\+#]+", jd_text_lower)))
 
     results = []
 
@@ -95,52 +98,74 @@ def rank_resumes_against_jd(jd_text, files):
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
 
-        text = extract_text_from_file(filepath)
-        os.remove(filepath)
+        resume_text = extract_text_from_file(filepath)
 
-        skills = extract_skills_sbert(text)
+        try:
+            os.remove(filepath)
+        except:
+            pass
 
-        llm_data = analyze_resume_llm(text)
-        roles = llm_data.get("predicted_roles", [])
-        exp = llm_data.get("experience", [])
+        # ---------- SKILLS ----------
+        resume_skills = extract_skills_sbert(resume_text)
+        if not resume_skills:
+            resume_skills = list(set(re.findall(r"[a-zA-Z\+#]+", resume_text.lower())))
 
+        skill_match, overlap, missing = skill_match_percent(
+            resume_skills,
+            jd_skills
+        )
+
+        # ---------- ATS ----------
         ats = calculate_ats_score(
-            text,
-            relevant_skills=skills,
+            resume_text,
+            relevant_skills=resume_skills,
             missing_skills=[],
             jd_provided=True
         )["score"]
 
-        skill_match, _, _ = skill_match_percent(skills, jd_skills)
-
+        # ---------- ROLE MATCH ----------
         role_score = 0
-        for r in roles:
-            if r.lower() in jd_text_lower:
+        roles_keywords = [
+            "data scientist",
+            "ml engineer",
+            "ai engineer",
+            "software engineer",
+            "backend",
+            "frontend"
+        ]
+
+        for rk in roles_keywords:
+            if rk in resume_text.lower() and rk in jd_text_lower:
                 role_score = 100
                 break
 
+        # ---------- EXPERIENCE ----------
         years = 0
-        for e in exp:
-            y = e.get("duration_years")
-            if isinstance(y, (int, float)):
-                years += y
+        matches = re.findall(r"(\d+(?:\.\d+)?)\s+years", resume_text.lower())
+        for m in matches:
+            try:
+                years += float(m)
+            except:
+                pass
 
         exp_score = min(100, years * 10)
 
+        # ---------- FINAL ----------
         final = (
-            0.4 * ats +
-            0.4 * skill_match +
+            0.5 * skill_match +
+            0.3 * ats +
             0.1 * role_score +
             0.1 * exp_score
         )
 
         results.append({
             "filename": file.filename,
-            "ats": ats,
-            "skill_match": skill_match,
+            "ats": round(ats, 2),
+            "skill_match": round(skill_match, 2),
             "role_match": role_score,
-            "experience_years": years,
-            "final": round(final, 2)
+            "experience_years": round(years, 1),
+            "final": round(final, 2),
+            "overlap": overlap[:8]
         })
 
     results.sort(key=lambda x: x["final"], reverse=True)
