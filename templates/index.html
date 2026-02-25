@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<section class="hero">
+
+  <!-- TITLE -->
+  <h1 class="hero-title">
+    Smart Resume Analyzer
+  </h1>
+
+  <!-- SUBTITLE -->
+  <p class="hero-subtitle">
+    AI-powered resume insights for job seekers and recruiters
+  </p>
+
+  <!-- FORM CARD -->
+  <div class="hero-card">
+
+    <form action="/analyze" method="POST" enctype="multipart/form-data">
+
+      <!-- MODE SELECTION -->
+      <div class="mode-switch">
+        <label class="mode-option">
+          <input type="radio" name="mode" value="jobseeker" checked>
+          Job Seeker
+        </label>
+
+        <label class="mode-option">
+          <input type="radio" name="mode" value="recruiter">
+          Recruiter
+        </label>
+      </div>
+
+      <!-- FILE UPLOAD -->
+      <div class="form-group">
+        <label class="form-label">Upload Resume</label>
+        <input type="file" name="resume" required class="file-input">
+      </div>
+
+      <!-- JOB DESCRIPTION (RECRUITER ONLY) -->
+      <div class="form-group" id="jd-group" style="display:none;">
+        <label class="form-label">Job Description</label>
+        <textarea
+          name="jd"
+          rows="6"
+          placeholder="Paste the job description here"
+          class="text-area"
+        ></textarea>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="actions">
+        <button type="submit" class="btn-primary">
+          Analyze Resume
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</section>
+
+{% endblock %}

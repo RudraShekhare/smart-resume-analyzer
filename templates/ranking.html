@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+  <h1 class="page-title">Recruiter Resume Ranking</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+    <textarea name="jd" placeholder="Paste Job Description"></textarea>
+    <input type="file" name="resumes" multiple>
+    <button class="btn-primary">Rank Resumes</button>
+  </form>
+
+  {% if ranked %}
+  <div class="card full-width">
+    <h2>Ranking Results</h2>
+
+    <table class="ranking-table">
+      <tr>
+        <th>Rank</th>
+        <th>Resume</th>
+        <th>ATS</th>
+        <th>Skill Match</th>
+        <th>Role Match</th>
+        <th>Experience</th>
+        <th>Final Score</th>
+      </tr>
+
+      {% for r in ranked %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ r.filename }}</td>
+        <td>{{ r.ats }}%</td>
+        <td>{{ r.skill_match }}%</td>
+        <td>{{ r.role_match }}%</td>
+        <td>{{ r.experience_years }} yrs</td>
+        <td><strong>{{ r.final }}</strong></td>
+      </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+
+  <h1 class="page-title">Resume Analysis Result</h1>
+
+  <!-- TOP SCORES -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>ATS Friendliness</h3>
+      <div class="score">{{ ats_score }}%</div>
+    </div>
+
+    {% if mode == "recruiter" and skill_match is not none %}
+    <div class="stat-card">
+      <h3>Skill Match</h3>
+      <div class="score">{{ skill_match }}%</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="results-grid">
+
+    <!-- PREDICTED ROLES -->
+    <div class="card">
+      <h2>Predicted Roles</h2>
+      {% if predicted_roles %}
+        <ul class="suggestions-list">
+          {% for role in predicted_roles %}
+            <li>{{ role }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted-text">No roles predicted.</p>
+      {% endif %}
+    </div>
+
+    <!-- CATEGORIZED SKILLS -->
+    <div class="card">
+      <h2>Skill Categories</h2>
+      {% if categorized_skills %}
+        {% for cat, skills in categorized_skills.items() %}
+          <div class="skill-category">
+            <div class="category-title">{{ cat|capitalize }}</div>
+            <div class="skills-wrap">
+              {% for skill in skills %}
+                <span class="skill-badge">{{ skill }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="muted-text">No categorized skills.</p>
+      {% endif %}
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="card full-width">
+      <h2>Extracted Experience</h2>
+      {% if experience %}
+        <table class="experience-table">
+          <tr>
+            <th>Role</th>
+            <th>Company</th>
+            <th>Years</th>
+            <th>Domain</th>
+          </tr>
+          {% for e in experience %}
+          <tr>
+            <td>{{ e.role or "-" }}</td>
+            <td>{{ e.company or "-" }}</td>
+            <td>{{ e.duration_years or "-" }}</td>
+            <td>{{ e.domain or "-" }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <p class="muted-text">No experience detected.</p>
+      {% endif %}
+    </div>
+
+    <!-- RESUME SKILLS -->
+    <div class="card">
+      <h2>Extracted Resume Skills</h2>
+      {% if resume_skills %}
+        <div class="skills-wrap">
+          {% for skill in resume_skills %}
+            <span class="skill-badge">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted-text">No skills detected.</p>
+      {% endif %}
+    </div>
+
+    <!-- JD SKILLS (RECRUITER ONLY) -->
+    {% if mode == "recruiter" and jd_skills %}
+    <div class="card">
+      <h2>Job Description Skills</h2>
+      <div class="skills-wrap">
+        {% for skill in jd_skills %}
+          <span class="skill-badge">{{ skill }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- AI SUMMARY (JOBSEEKER ONLY) -->
+    {% if mode == "jobseeker" %}
+    <div class="card full-width">
+      <h2>AI Resume Summary</h2>
+      {% if summary %}
+        <div class="summary-text">
+          <p>{{ summary }}</p>
+        </div>
+      {% else %}
+        <p class="muted-text">AI summary unavailable.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- SUGGESTIONS (JOBSEEKER ONLY) -->
+    {% if mode == "jobseeker" %}
+    <div class="card full-width">
+      <h2>Improvement Suggestions</h2>
+      {% if suggestions %}
+        <ul class="suggestions-list">
+          {% for tip in suggestions %}
+            <li>{{ tip }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted-text">No suggestions available.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+
+    <a href="/" class="btn-primary">Analyze Another Resume</a>
+
+    <!-- DOWNLOAD PDF REPORT -->
+    <form method="POST" action="/download_report" style="margin-top:16px;">
+      <input type="hidden" name="report_data" value='{{ {
+        "ats": ats_score,
+        "skill_match": skill_match,
+        "roles": predicted_roles,
+        "summary": summary,
+        "suggestions": suggestions
+      } | tojson }}'>
+      <button class="btn-primary">Download PDF Report</button>
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}
