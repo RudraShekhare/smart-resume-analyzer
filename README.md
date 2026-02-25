@@ -27,6 +27,20 @@ The system provides intelligent feedback for job seekers and automated candidate
 
 ---
 
+## 📸 Application Screenshots
+
+### Job Seeker Analysis
+![Job Seeker](assets/jobseeker.png)
+
+### Job Seeker Results
+![Job Seeker Result](assets/jobseeker2.png)
+
+### Recruiter Ranking
+![Recruiter Ranking](assets/jobseeker3.png)
+
+### PDF Report Download
+![PDF Report](assets/download.png)
+
 ## 🧠 AI / NLP Components
 
 - Llama-3 (Groq API) → structured resume intelligence
@@ -137,3 +151,4 @@ Pune, India
 git add README.md
 git commit -m "Update README"
 git push
+
