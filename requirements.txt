@@ -1,10 +1,6 @@
 flask
-gunicorn
 python-dotenv
 groq
-sentence-transformers
-torch
 pymupdf
 docx2txt
 scikit-learn
-reportlab
