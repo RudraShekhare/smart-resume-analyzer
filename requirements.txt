@@ -1,6 +1,10 @@
 flask
+gunicorn
 python-dotenv
-openai
+groq
+sentence-transformers
+torch
 pymupdf
 docx2txt
 scikit-learn
+reportlab
