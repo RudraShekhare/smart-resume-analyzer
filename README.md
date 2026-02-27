@@ -61,6 +61,8 @@ Final Score =
 ---
 
 ## 📁 Project Structure
+
+```
 smart-resume-analyzer/
 │
 ├── app.py
@@ -86,7 +88,7 @@ smart-resume-analyzer/
 │ └── js/animations.js
 │
 └── README.md
-
+```
 
 ---
 
@@ -98,11 +100,15 @@ cd smart-resume-analyzer
 pip install -r requirements.txt
 ```
 
+---
+
 **🔑 Environment Setup**
 
 Create a .env file in the project root:
 
 GROQ_API_KEY=your_api_key_here
+
+---
 
 **▶️ Run the Application**
 python app.py
@@ -119,6 +125,8 @@ http://127.0.0.1:5000
   -Predicted roles
   -Summary
   -Suggestions
+  
+---
 
 **🎯 Use Cases**
 
@@ -134,10 +142,10 @@ http://127.0.0.1:5000
 
 **👤 Author**
 
-**Rudra Shekhare
+**Rudra Shekhare**
+@Computer Engineering - viit,pune.
 AI / ML Engineer
-Pune, India
-**
+Pune, India**
 
 ---
 
@@ -151,4 +159,5 @@ Pune, India
 git add README.md
 git commit -m "Update README"
 git push
+```
 
